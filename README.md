@@ -10,53 +10,53 @@
 
 ## Getting started
 
-    ### Create config.yml
+### Create config.yml
 
-        projetA:
-          database:
-              driver: mysql
-              host: 127.0.0.1
-              name: projetA
-              user: projetA
-              password: t2eV9hOVPKzXly3tKZau
-              # include_tables:
-              #     - table1
-              #     - table2
-              # exclude_tables:
-              #     - table1
-              #     - table2
-              compress: GZIP
-              # no_data: false
-              # add_drop_database: false
-              # add_drop_table: false
-              # single_transaction: false
-              # lock_tables: false
-              # add_locks: false
-              # extended_insert: false
-              # disable_foreign_keys_check: false
-              backup_path: /home/admin/backup/projetA
-          archive:
-              folders:
-                  - /home/admin/www/projetA/current/web/assets
-                  - /home/admin/www/projetA/current/web/uploads
-              backup_path: /home/admin/backup/projetA
+    projetA:
+        database:
+            driver: mysql
+            host: 127.0.0.1
+            name: projetA
+            user: projetA
+            password: t2eV9hOVPKzXly3tKZau
+            # include_tables:
+            #     - table1
+            #     - table2
+            # exclude_tables:
+            #     - table1
+            #     - table2
+            compress: GZIP
+            # no_data: false
+            # add_drop_database: false
+            # add_drop_table: false
+            # single_transaction: false
+            # lock_tables: false
+            # add_locks: false
+            # extended_insert: false
+            # disable_foreign_keys_check: false
+            backup_path: /home/admin/backup/projetA
+        archive:
+            folders:
+                - /home/admin/www/projetA/current/web/assets
+                - /home/admin/www/projetA/current/web/uploads
+            backup_path: /home/admin/backup/projetA
 
-      projetB:
-          database:
-              name: projetB
-              user: projetB
-              password: zXly3tKZaut2eV9hOVPK
-              backup_path: /home/admin/backup/projetB
+    projetB:
+        database:
+            name: projetB
+            user: projetB
+            password: zXly3tKZaut2eV9hOVPK
+            backup_path: /home/admin/backup/projetB
 
-      projetC:
-          archive:
-              folders:
-                  - /home/admin/www/projetC/current/web/assets
-              backup_path: /home/admin/backup/projetC
+    projetC:
+        archive:
+            folders:
+                - /home/admin/www/projetC/current/web/assets
+            backup_path: /home/admin/backup/projetC
 
-    ### Start command
+### Start command
 
-        bin/safeguard backup config.yml
+    bin/safeguard backup config.yml
 
 ## Composer
 
