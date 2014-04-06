@@ -1,0 +1,36 @@
+{
+    "name": "spotlab/safeguard",
+    "type": "library",
+    "description": "",
+    "keywords": ["dump","backup","mysql","PDO","file"],
+    "homepage": "http://github.com/spotlab/safeguard",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Léo POIROUX",
+            "email": "leo.poiroux@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/console": "2.4.*",
+        "symfony/yaml": "2.4.*",
+        "symfony/filesystem": "2.4.*",
+        "symfony/finder": "2.4.*",
+        "clouddueling/mysqldump-php": "1.0.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Spotlab\\Safeguard": ["src/"]
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "bin": [
+        "bin/safeguard"
+    ]
+}

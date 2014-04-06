@@ -1,1 +1,8 @@
-/node_modules/
+/builds/
+/vendor/
+/REVISION
+
+# custom ignore files
+.idea
+report
+.DS_Store

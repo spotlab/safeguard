@@ -1,0 +1,5 @@
+projetTest:
+    archive:
+        folders:
+            - tests/examples
+        backup_path: tests/examples
