@@ -8,7 +8,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
 
     public function __construct()
     {
-        $this->guardian = new Guardian(__DIR__ . '/../config.yml');
+        $this->guardian = new Guardian(__DIR__ . '/../tests/examples/config.yml');
     }
 
     public function testgetProjects()
@@ -111,10 +111,10 @@ class GuardianTest extends PHPUnit_Framework_TestCase
     public function testgetBackupPath()
     {
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'database');
-        $this->assertEquals($return, '/home/admin/backup/projetA');
+        $this->assertEquals($return, '/tmp/backup/projetA');
 
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'archive');
-        $this->assertEquals($return, '/home/admin/backup/projetA');
+        $this->assertEquals($return, '/tmp/backup/projetA');
 
         try {
             $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'KeyNotExist');
@@ -123,7 +123,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         }
 
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetB', 'database');
-        $this->assertEquals($return, '/home/admin/backup/projetB');
+        $this->assertEquals($return, '/tmp/backup/projetB');
 
         try {
             $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetB', 'archive');
@@ -156,7 +156,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
      */
     public function callPrivateMethod($object, $methodName)
     {
-        $reflectionClass = new \ReflectionClass($object);
+        $reflectionClass = new ReflectionClass($object);
         $reflectionMethod = $reflectionClass->getMethod($methodName);
         $reflectionMethod->setAccessible(true);
 

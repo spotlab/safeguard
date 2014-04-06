@@ -1,5 +1,27 @@
-projetTest:
+projetA:
+    database:
+        driver: mysql
+        host: 127.0.0.1
+        name: projetA
+        user: projetA
+        password: t2eV9hOVPKzXly3tKZau
+        compress: GZIP
+        backup_path: /tmp/backup/projetA
     archive:
         folders:
-            - tests/examples
-        backup_path: tests/examples
+            - /home/admin/www/projetA/current/web/assets
+            - /home/admin/www/projetA/current/web/uploads
+        backup_path: /tmp/backup/projetA
+
+projetB:
+    database:
+        name: projetB
+        user: projetB
+        password: zXly3tKZaut2eV9hOVPK
+        backup_path: /tmp/backup/projetB
+
+projetC:
+    archive:
+        folders:
+            - /home/admin/www/projetC/current/web/assets
+        backup_path: /tmp/backup/projetC
