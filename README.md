@@ -12,7 +12,20 @@ A simple application that parses through a config.yml file, to backup database (
 
 ## Getting started
 
-### Create config.yml
+#### Composer
+
+```
+{
+    "require": {
+        "spotlab/safeguard": "1.*"
+    },
+    "config": {
+        "bin-dir": "bin"
+    }
+}
+```
+
+#### Create config.yml
 
     projetA:
         database:
@@ -56,21 +69,9 @@ A simple application that parses through a config.yml file, to backup database (
                 - /home/admin/www/projetC/current/web/assets
             backup_path: /home/admin/backup/projetC
 
-### Start command
+#### Start command
 
     bin/safeguard backup config.yml
-
-## Composer
-
-```
-"spotlab/safeguard": "dev-master"
-```
-
-or
-
-```
-"spotlab/safeguard": "1.*"
-```
 
 ## Contributing
 
