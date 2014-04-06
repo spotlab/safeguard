@@ -1,5 +1,7 @@
 # Safeguard - PHP
 
+A simple application that parses through a config.yml file, to backup database (mysql, sqlite, pgsql, dblib) and to archive files in tar.gz
+
 [![Build Status](https://travis-ci.org/spotlab/safeguard.png?branch=master)](https://travis-ci.org/spotlab/safeguard)
 [![Latest Stable Version](https://poser.pugx.org/spotlab/safeguard/v/stable.png)](https://packagist.org/packages/spotlab/safeguard)
 
