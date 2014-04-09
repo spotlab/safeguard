@@ -44,7 +44,7 @@ class Guardian
     {
         // Exception if not defined
         if (!isset($this->config[$project]['archive'])) {
-            throw new \Exception('No "Archive config" for this project', 0);
+            throw new \Exception('No "Archive config" for this project', 1);
         }
 
         // Data required to backup Database
