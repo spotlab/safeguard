@@ -262,8 +262,8 @@ class Guardian
     }
 
     /**
-     * @param  array  $dirList
-     * @return string $common
+     * @param  array  $folders
+     * @return string $path
      */
     private function getCommonPath($folders)
     {

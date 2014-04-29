@@ -150,6 +150,12 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($projects, array('name' => __DIR__ . '/examples/archive.tar.gz', 'size' => '2.05Mo'));
     }
 
+    public function testgetCommonPath()
+    {
+        $path = $this->callPrivateMethod($this->guardian, 'getCommonPath', array('tests/debug/iterator/folderA', 'tests/debug/iterator/folderB', 'tests/debug/iterator/folderC/subfolder'));
+        $this->assertEquals($path, realpath('tests/debug/iterator'));
+    }
+
     /**
      * @param mixed $object
      * @param mixed $methodName
