@@ -14,7 +14,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
     public function testgetProjects()
     {
         $projects = $this->guardian->getProjects();
-        $this->assertEquals($projects, array('projetA', 'projetB', 'projetC'));
+        $this->assertEquals($projects, array('projetA', 'projetB', 'projetC', 'projetD'));
     }
 
     public function testgetDatabaseAccess()
@@ -89,9 +89,6 @@ class GuardianTest extends PHPUnit_Framework_TestCase
 
     public function testgetArchiveSettings()
     {
-        $return = $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetA');
-        $this->assertEquals($return, array('/home/admin/www/projetA/current/web/assets', '/home/admin/www/projetA/current/web/uploads'));
-
         try {
             $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetB');
         } catch (Exception $e) {
@@ -99,7 +96,39 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         }
 
         $return = $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetC');
-        $this->assertEquals($return, array('/home/admin/www/projetC/current/web/assets'));
+        $this->assertEquals($return, array('folders' => array('/home/admin/www/projetC/current/web/assets')));
+
+        try {
+            $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'ProjectNotExist');
+        } catch (Exception $e) {
+            $this->assertEquals($e->getMessage(), 'Config for "Archive Backup" is not defined');
+        }
+
+        $return = $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetD');
+        $this->assertEquals($return, array(
+            'minsize' => '>= 0',
+            'maxsize' => '<= 2G',
+            'exclude_folders' => array('tests/debug/iterator/folderB/exclude'),
+            'exclude_files' => array('exclude.gif', '.jpg'),
+            'folders' => array('tests/debug/iterator/folderA', 'tests/debug/iterator/folderB', 'tests/debug/iterator/folderC/subfolder')
+        ));
+    }
+
+    public function testgetArchiveFilesList()
+    {
+        $return = $this->callPrivateMethod($this->guardian, 'getArchiveFilesList', 'projetD');
+        $this->assertEquals($return, array(
+            'folderA/chuckA.gif' => realpath('tests/debug/iterator/folderA/chuckA.gif'),
+            'folderB/chuckB.gif' => realpath('tests/debug/iterator/folderB/chuckB.gif'),
+            'folderB/chuckBbis.gif' => realpath('tests/debug/iterator/folderB/chuckBbis.gif'),
+            'folderB/subfolder/chuckBter.gif' => realpath('tests/debug/iterator/folderB/subfolder/chuckBter.gif'),
+            'folderC/subfolder/chuckC.gif' => realpath('tests/debug/iterator/folderC/subfolder/chuckC.gif'),
+            'folderC/subfolder/subsubfolder/chuckCbis.gif' => realpath('tests/debug/iterator/folderC/subfolder/subsubfolder/chuckCbis.gif'),
+        ));
+
+        $this->assertFalse(array_key_exists('folderB/exclude/chuck.gif', $return));
+        $this->assertFalse(array_key_exists('folderA/norris.jpg', $return));
+        $this->assertFalse(array_key_exists('folderC/exclude.gif', $return));
 
         try {
             $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'ProjectNotExist');
@@ -111,10 +140,10 @@ class GuardianTest extends PHPUnit_Framework_TestCase
     public function testgetBackupPath()
     {
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'database');
-        $this->assertEquals($return, '/tmp/backup/projetA');
+        $this->assertEquals($return, realpath('/tmp/backup/projetA'));
 
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'archive');
-        $this->assertEquals($return, '/tmp/backup/projetA');
+        $this->assertEquals($return, realpath('/tmp/backup/projetA'));
 
         try {
             $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetA', 'KeyNotExist');
@@ -123,7 +152,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         }
 
         $return = $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetB', 'database');
-        $this->assertEquals($return, '/tmp/backup/projetB');
+        $this->assertEquals($return, realpath('/tmp/backup/projetB'));
 
         try {
             $this->callPrivateMethod($this->guardian, 'getBackupPath', 'projetB', 'archive');

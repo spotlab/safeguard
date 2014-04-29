@@ -1,11 +1,25 @@
 projetA:
     archive:
+        minsize: >= 0
+        maxsize: <= 2G
+        exclude_folders:
+            - tests/debug/iterator/folderB/exclude
+        exclude_files:
+            - exclude.gif
+            - .jpg
         folders:
             - tests/debug/iterator
         backup_path: tests/debug/backup/projetA
 
 projetB:
     archive:
+        minsize: >= 0
+        maxsize: <= 2G
+        exclude_folders:
+            - tests/debug/iterator/folderB/exclude
+        exclude_files:
+            - exclude.gif
+            - .jpg
         folders:
             - tests/debug/iterator/folderA
             - tests/debug/iterator/folderB

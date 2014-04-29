@@ -51,30 +51,75 @@ class Guardian
         $path = $this->getBackupPath($project, 'archive');
         $filename = date('Ymd_His') . '.tar';
 
-        // Folders to backup
-        $folders = $this->getArchiveSettings($project);
-        $commonPath = $this->getCommonPath($folders);
-
         // Create Archive
         $phar = new \PharData($path . '/' . $filename);
-
-        // Search file with compression
-        $finder = new Finder();
-        $list = array();
-        foreach ($folders as $folder) {
-            $iterator = $finder->files()->in($folder)->name('*');
-            foreach ($iterator as $file) {
-                $list[str_replace($commonPath, '', $file->getRealpath())] = $file->getRealpath();
-            }
-
-            $phar->buildFromIterator(new \ArrayIterator($list));
-        }
+        $phar->buildFromIterator(new \ArrayIterator($this->getArchiveFilesList($project)));
 
         // Compress and unlink none compress archive
         $phar->compress(\Phar::GZ);
         unlink($path . '/' . $filename);
 
         return $this->getBackupInfo($path, $filename);
+    }
+
+    /**
+     * @param  string $project
+     * @return array  $return
+     */
+    public function getArchiveFilesList($project)
+    {
+        $return = array();
+
+        // Folders to backup
+        $settings = $this->getArchiveSettings($project);
+        $commonPath = $this->getCommonPath($settings['folders']);
+
+        // Search file with compression
+        $finder = new Finder();
+        $finder = $finder->files()->followLinks();
+
+        foreach ($settings['folders'] as $folder) {
+            $finder = $finder->in($folder);
+
+            //Settings
+            if (!empty($settings['minsize'])) {
+                $finder = $finder->size($settings['minsize']);
+            }
+
+            if (!empty($settings['maxsize'])) {
+                $finder = $finder->size($settings['maxsize']);
+            }
+
+            if (!empty($settings['exclude_folders'])) {
+                foreach ($settings['exclude_folders'] as $exclude_folder) {
+                    $exclude_folder = str_replace(realpath($folder) . '/', '', realpath($exclude_folder));
+                    $finder = $finder->exclude($exclude_folder);
+                }
+            }
+
+            if (!empty($settings['exclude_files'])) {
+                foreach ($settings['exclude_files'] as $exclude_file) {
+                    if (substr($exclude_file, 0, 1) == '.') {
+                        $exclude_file = '*' . $exclude_file;
+                    }
+                    $finder = $finder->notName($exclude_file);
+                }
+            }
+
+            # Create list to archive
+            foreach ($finder as $file) {
+                $return[str_replace($commonPath . '/', '', $file->getRealpath())] = $file->getRealpath();
+            }
+        }
+
+        // Duplicates are removed if they exist
+        $return = array_unique($return);
+
+        if (empty($return)) {
+            throw new \Exception('No such files to archive for this project', 1);
+        }
+
+        return $return;
     }
 
     /**
@@ -198,9 +243,22 @@ class Guardian
         $return = array();
 
         // Default values
-        if (!empty($config['folders'])) {
-            $return = $config['folders'];
-        } else {
+        $default = array(
+            'minsize' => false,
+            'maxsize' => false,
+            'exclude_folders' => false,
+            'exclude_files' => false,
+            'folders' => false,
+        );
+
+        foreach (array_keys($default) as $key) {
+            if (array_key_exists($key, $config) && (!empty($config[$key]) || $config[$key] === false )) {
+                $return[$key] = $config[$key];
+            }
+        }
+
+        // Default values
+        if (empty($return['folders'])) {
             throw new \Exception('Archive "folders" must be defined', 0);
         }
 
@@ -247,7 +305,7 @@ class Guardian
 
         // Search file with compression
         $finder = new Finder();
-        $iterator = $finder->in($path)->name($filename . '*');
+        $iterator = $finder->in($path)->name($filename . '*')->followLinks();
         foreach ($iterator as $file) {
             $filename = $file->getFilename();
         }

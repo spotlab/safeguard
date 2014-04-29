@@ -51,6 +51,15 @@ A simple application that parses through a config.yml file, to backup database (
             # disable_foreign_keys_check: false
             backup_path: /home/admin/backup/projetA
         archive:
+            # minsize: >= 10k
+            # maxsize: <= 2G
+            # exclude_folders:
+            #     - /home/admin/www/projetA/current/web/assets/CACHE
+            #     - /home/admin/www/projetA/current/web/assets/exclude
+            # exclude_files:
+            #     - myfilename.gif
+            #     - .jpg
+            #     - .exe
             folders:
                 - /home/admin/www/projetA/current/web/assets
                 - /home/admin/www/projetA/current/web/uploads

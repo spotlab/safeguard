@@ -25,3 +25,18 @@ projetC:
         folders:
             - /home/admin/www/projetC/current/web/assets
         backup_path: /tmp/backup/projetC
+
+projetD:
+    archive:
+        minsize: >= 0
+        maxsize: <= 2G
+        exclude_folders:
+            - tests/debug/iterator/folderB/exclude
+        exclude_files:
+            - exclude.gif
+            - .jpg
+        folders:
+            - tests/debug/iterator/folderA
+            - tests/debug/iterator/folderB
+            - tests/debug/iterator/folderC/subfolder
+        backup_path: /tmp/backup/projetD

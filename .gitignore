@@ -2,6 +2,7 @@
 /builds/
 /vendor/
 /REVISION
+/tests/debug/backup
 
 # custom ignore files
 .idea
