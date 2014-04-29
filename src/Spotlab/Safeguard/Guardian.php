@@ -50,15 +50,24 @@ class Guardian
         // Data required to backup Database
         $path = $this->getBackupPath($project, 'archive');
         $filename = date('Ymd_His') . '.tar';
-        $folders = $this->getArchiveSettings($project);
 
-        // Create archive
+        // Folders to backup
+        $folders = $this->getArchiveSettings($project);
+        $commonPath = $this->getCommonPath($folders);
+
+        // Create Archive
         $phar = new \PharData($path . '/' . $filename);
+
+        // Search file with compression
+        $finder = new Finder();
+        $list = array();
         foreach ($folders as $folder) {
-            // if (substr($folder, 0, 1) != '/') {
-            //     $folder = __DIR__ . '/' . $folder;
-            // }
-            $phar->buildFromDirectory($folder);
+            $iterator = $finder->files()->in($folder)->name('*');
+            foreach ($iterator as $file) {
+                $list[str_replace($commonPath, '', $file->getRealpath())] = $file->getRealpath();
+            }
+
+            $phar->buildFromIterator(new \ArrayIterator($list));
         }
 
         // Compress and unlink none compress archive
@@ -250,5 +259,40 @@ class Guardian
         $return['size'] = round((filesize($return['name']) / 1000000), 2) . 'Mo';
 
         return $return;
+    }
+
+    /**
+     * @param  array  $dirList
+     * @return string $common
+     */
+    private function getCommonPath($folders)
+    {
+        $return = array();
+        foreach ($folders as $i => $folder) {
+            $return[$i] = explode('/', realpath($folder));
+            unset($return[$i][0]);
+
+            $arr[$i] = count($return[$i]);
+        }
+
+        $min = min($arr);
+        for ($i = 0; $i < count($return); $i++) {
+            while (count($return[$i]) > $min) {
+                array_pop($return[$i]);
+            }
+
+            $return[$i] = '/' . implode('/' , $return[$i]);
+        }
+
+        // Check every parents and reduce array
+        $return = array_unique($return);
+        while (count($return) !== 1) {
+            $return = array_map('dirname', $return);
+            $return = array_unique($return);
+        }
+
+        reset($return);
+
+        return current($return);
     }
 }

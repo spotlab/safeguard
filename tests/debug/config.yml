@@ -1,0 +1,13 @@
+projetA:
+    archive:
+        folders:
+            - tests/debug/iterator
+        backup_path: tests/debug/backup/projetA
+
+projetB:
+    archive:
+        folders:
+            - tests/debug/iterator/folderA
+            - tests/debug/iterator/folderB
+            - tests/debug/iterator/folderC/subfolder
+        backup_path: tests/debug/backup/projetB
