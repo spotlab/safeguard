@@ -45,31 +45,38 @@ class Backup extends Command
 
         // Actions for every projects in config
         $projects = $guardian->getProjects();
+        
         foreach ($projects as $project) {
+            
             $output->writeln(sprintf('> Start project : <info>%s</info>', $project));
 
-            try {
-                $backupDatabase = $guardian->backupDatabase($project);
-                if (!empty($backupDatabase)) {
-                    $output->writeln('>> Dump database <info>' . $backupDatabase['name'] . '" (' . $backupDatabase['size'] . ')</info>');
+            if (!empty($project['database'])) {
+                $output->write('>> Dumping database');
+                try {
+                    $backupDatabase = $guardian->backupDatabase($project);
+                    if (!empty($backupDatabase)) {
+                        $output->writeln(' : <info>' . $backupDatabase['name'] . '" (' . $backupDatabase['size'] . ')</info>');
+                    }
+                } catch (\Exception $e) {
+                    if($e->getCode() == 0) $style = 'error';
+                    else $style = 'comment';
+                    $output->writeln(sprintf(' : <' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
                 }
-            } catch (\Exception $e) {
-                if($e->getCode() == 0) $style = 'error';
-                else $style = 'comment';
-                $output->writeln(sprintf('<' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
             }
 
-            try {
-                $backupArchive = $guardian->backupArchive($project);
-                if (!empty($backupArchive)) {
-                    $output->writeln('>> Create archive <info>' . $backupArchive['name'] . '" (' . $backupArchive['size'] . ')</info>');
+            if (!empty($project['archive'])) {
+                $output->write('>> Creating archive');
+                try {
+                    $backupArchive = $guardian->backupArchive($project);
+                    if (!empty($backupArchive)) {
+                        $output->writeln(' : <info>' . $backupArchive['name'] . '" (' . $backupArchive['size'] . ')</info>');
+                    }
+                } catch (\Exception $e) {
+                    if($e->getCode() == 0) $style = 'error';
+                    else $style = 'comment';
+                    $output->writeln(sprintf(' : <' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
                 }
-            } catch (\Exception $e) {
-                if($e->getCode() == 0) $style = 'error';
-                else $style = 'comment';
-                $output->writeln(sprintf('<' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
             }
-
         }
 
         $output->writeln('Finished : <info>Done</info>');

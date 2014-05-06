@@ -47,10 +47,21 @@ class Guardian
             throw new \Exception('No "Archive config" for this project', 1);
         }
 
+        // Get backup settings
+        $settings = $this->getArchiveSettings($project);
+
+        // Get backup file prefix
+        $backupFilePrefix = '';
+        if (!empty($settings['backup_file_prefix'])) {
+            $backupFilePrefix = $settings['backup_file_prefix'];
+        }
+
+        // Set filename
+        $filename = $backupFilePrefix . date('Ymd_His') . '.tar';
+
         // Data required to backup Database
         $path = $this->getBackupPath($project, 'archive');
-        $filename = date('Ymd_His') . '.tar';
-
+        
         // Create Archive
         $phar = new \PharData($path . '/' . $filename);
         $phar->buildFromIterator(new \ArrayIterator($this->getArchiveFilesList($project)));
@@ -135,10 +146,22 @@ class Guardian
 
         // Data required to backup Database
         $path = $this->getBackupPath($project, 'database');
-        $filename = date('Ymd_His') . '.sql';
-        $access = $this->getDatabaseAccess($project);
+
+        // Get database settings
         $settings = $this->getDatabaseSettings($project);
 
+        // Get backup file prefix
+        $backupDbPrefix = '';
+        if (!empty($settings['backup_file_prefix'])) {
+            $backupDbPrefix = $settings['backup_file_prefix'];
+        }
+
+        // Set filename
+        $filename = $backupDbPrefix . date('Ymd_His') . '.sql';
+        
+        // Get dtatbase access
+        $access = $this->getDatabaseAccess($project);
+        
         // Dump action
         $dump = new Mysqldump($access['name'], $access['user'], $access['password'], $access['host'], $access['driver'], $settings);
         $dump->start($path . '/' . $filename);
@@ -213,6 +236,7 @@ class Guardian
             'add_locks' => false,
             'extended_insert' => false,
             'disable_foreign_keys_check' => false,
+            'backup_file_prefix' => false
         );
 
         foreach (array_keys($default) as $key) {
@@ -249,6 +273,7 @@ class Guardian
             'exclude_folders' => false,
             'exclude_files' => false,
             'folders' => false,
+            'backup_file_prefix' => false
         );
 
         foreach (array_keys($default) as $key) {
