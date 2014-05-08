@@ -26,6 +26,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'password' => 't2eV9hOVPKzXly3tKZau',
             'name' => 'projetA',
             'user' => 'projetA',
+            'backup_file_prefix' => 'projetA_',
             )
         );
 
@@ -36,6 +37,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'password' => 'zXly3tKZaut2eV9hOVPK',
             'name' => 'projetB',
             'user' => 'projetB',
+            'backup_file_prefix' => false,
             )
         );
 
@@ -61,6 +63,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add-locks' => false,
             'extended-insert' => false,
             'disable-foreign-keys-check' => false,
+            'backup-file-prefix' => 'projetA_',
             )
         );
 
@@ -77,6 +80,7 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add-locks' => false,
             'extended-insert' => false,
             'disable-foreign-keys-check' => false,
+            'backup-file-prefix' => false
             )
         );
 

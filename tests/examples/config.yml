@@ -7,11 +7,13 @@ projetA:
         password: t2eV9hOVPKzXly3tKZau
         compress: GZIP
         backup_path: /tmp/backup/projetA
+        backup_file_prefix: projetA_
     archive:
         folders:
             - /home/admin/www/projetA/current/web/assets
             - /home/admin/www/projetA/current/web/uploads
         backup_path: /tmp/backup/projetA
+        backup_file_prefix: projetA_
 
 projetB:
     database:

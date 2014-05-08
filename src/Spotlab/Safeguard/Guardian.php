@@ -192,6 +192,7 @@ class Guardian
             'password' => '',
             'name' => '',
             'user' => '',
+            'backup_file_prefix' => '',
         );
 
         foreach (array_keys($default) as $key) {
