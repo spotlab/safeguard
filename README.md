@@ -50,6 +50,7 @@ A simple application that parses through a config.yml file, to backup database (
             # extended_insert: false
             # disable_foreign_keys_check: false
             backup_path: /home/admin/backup/projetA
+            backup_file_prefix: projetA_
         archive:
             # minsize: >= 10k
             # maxsize: <= 2G
@@ -64,6 +65,7 @@ A simple application that parses through a config.yml file, to backup database (
                 - /home/admin/www/projetA/current/web/assets
                 - /home/admin/www/projetA/current/web/uploads
             backup_path: /home/admin/backup/projetA
+            backup_file_prefix: projetA_
 
     projetB:
         database:
@@ -71,12 +73,14 @@ A simple application that parses through a config.yml file, to backup database (
             user: projetB
             password: zXly3tKZaut2eV9hOVPK
             backup_path: /home/admin/backup/projetB
+            backup_file_prefix: projetB_
 
     projetC:
         archive:
             folders:
                 - /home/admin/www/projetC/current/web/assets
             backup_path: /home/admin/backup/projetC
+            backup_file_prefix: projetC_
 
 #### Start command
 
