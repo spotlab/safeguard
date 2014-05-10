@@ -21,11 +21,13 @@ projetA:
         # extended_insert: false
         # disable_foreign_keys_check: false
         backup_path: /home/admin/backup/projetA
+        backup_file_prefix: projetA_
     archive:
         folders:
             - /home/admin/www/projetA/current/web/assets
             - /home/admin/www/projetA/current/web/uploads
         backup_path: /home/admin/backup/projetA
+        backup_file_prefix: projetA_
 
 projetB:
     database:

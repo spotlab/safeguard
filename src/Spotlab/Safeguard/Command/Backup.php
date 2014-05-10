@@ -42,34 +42,41 @@ class Backup extends Command
         $config_path = $input->getArgument('config');
         $guardian = new Guardian($config_path);
         $output->writeln(sprintf('Analysing config file : <info>%s</info>', $config_path));
+        $output->write("\n");
 
         // Actions for every projects in config
         $projects = $guardian->getProjects();
+        
         foreach ($projects as $project) {
+            
             $output->writeln(sprintf('> Start project : <info>%s</info>', $project));
+            $output->writeln('------------------------------');
 
+            $output->write('>> Dumping database');
             try {
                 $backupDatabase = $guardian->backupDatabase($project);
                 if (!empty($backupDatabase)) {
-                    $output->writeln('>> Dump database <info>' . $backupDatabase['name'] . '" (' . $backupDatabase['size'] . ')</info>');
+                    $output->write(' : <info>' . $backupDatabase['name'] . '" (' . $backupDatabase['size'] . ')</info>');
                 }
             } catch (\Exception $e) {
                 if($e->getCode() == 0) $style = 'error';
                 else $style = 'comment';
-                $output->writeln(sprintf('<' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
+                $output->write(sprintf(' : <' . $style . '>%s</' . $style . '>', $e->getMessage()));
             }
+            $output->write("\n");
 
+            $output->write('>> Creating archive');
             try {
                 $backupArchive = $guardian->backupArchive($project);
                 if (!empty($backupArchive)) {
-                    $output->writeln('>> Create archive <info>' . $backupArchive['name'] . '" (' . $backupArchive['size'] . ')</info>');
+                    $output->write(' : <info>' . $backupArchive['name'] . '" (' . $backupArchive['size'] . ')</info>');
                 }
             } catch (\Exception $e) {
                 if($e->getCode() == 0) $style = 'error';
                 else $style = 'comment';
-                $output->writeln(sprintf('<' . $style . '>>> %s</' . $style . '>', $e->getMessage()));
+                $output->write(sprintf(' : <' . $style . '>%s</' . $style . '>', $e->getMessage()));
             }
-
+            $output->write("\n\n");
         }
 
         $output->writeln('Finished : <info>Done</info>');
