@@ -61,7 +61,7 @@ class Guardian
 
         // Data required to backup Database
         $path = $this->getBackupPath($project, 'archive');
-        
+
         // Create Archive
         $phar = new \PharData($path . '/' . $filename);
         $phar->buildFromIterator(new \ArrayIterator($this->getArchiveFilesList($project)));
@@ -158,10 +158,10 @@ class Guardian
 
         // Set filename
         $filename = $backupDbPrefix . date('Ymd_His') . '.sql';
-        
+
         // Get dtatbase access
         $access = $this->getDatabaseAccess($project);
-        
+
         // Dump action
         $dump = new Mysqldump($access['name'], $access['user'], $access['password'], $access['host'], $access['driver'], $settings);
         $dump->start($path . '/' . $filename);

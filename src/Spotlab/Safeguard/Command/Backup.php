@@ -46,9 +46,9 @@ class Backup extends Command
 
         // Actions for every projects in config
         $projects = $guardian->getProjects();
-        
+
         foreach ($projects as $project) {
-            
+
             $output->writeln(sprintf('> Start project : <info>%s</info>', $project));
             $output->writeln('------------------------------');
 
