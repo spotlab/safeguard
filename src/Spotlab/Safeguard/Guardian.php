@@ -137,6 +137,41 @@ class Guardian
      * @param  string $project
      * @return array  $return
      */
+    public function cleanArchiveBackups($project)
+    {
+        // Exception if not defined
+        if (!isset($this->config[$project]['archive'])) {
+            throw new \Exception('No "Archive config" for this project', 1);
+        }
+
+        // Get database settings
+        $settings = $this->getArchiveSettings($project);
+
+        // Data required to backup Database
+        $path = $this->getBackupPath($project, 'archive');
+
+        // Search file with compression
+        $finder = new Finder();
+        $finder = $finder->files()->followLinks()->sortByName()->in($path);
+
+        # Create list to archive
+        foreach ($finder as $file) {
+            $allfiles[] = $file->getRealpath();
+        }
+
+        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
+
+        # Removing
+        $fs = new Filesystem();
+        $fs->remove($removeFiles);
+
+        return count($removeFiles) . ' archive backups removed';
+    }
+
+    /**
+     * @param  string $project
+     * @return array  $return
+     */
     public function backupDatabase($project)
     {
         // Exception if not defined
@@ -159,7 +194,7 @@ class Guardian
         // Set filename
         $filename = $backupDbPrefix . date('Ymd_His') . '.sql';
 
-        // Get dtatbase access
+        // Get database access
         $access = $this->getDatabaseAccess($project);
 
         // Dump action
@@ -167,6 +202,41 @@ class Guardian
         $dump->start($path . '/' . $filename);
 
         return $this->getBackupInfo($path, $filename);
+    }
+
+    /**
+     * @param  string $project
+     * @return array  $return
+     */
+    public function cleanDatabaseBackups($project)
+    {
+        // Exception if not defined
+        if (!isset($this->config[$project]['database'])) {
+            throw new \Exception('No "Database config" for this project', 1);
+        }
+
+        // Get database settings
+        $settings = $this->getArchiveSettings($project);
+
+        // Data required to backup Database
+        $path = $this->getBackupPath($project, 'database');
+
+        // Search file with compression
+        $finder = new Finder();
+        $finder = $finder->files()->followLinks()->sortByName()->in($path);
+
+        # Create list to archive
+        foreach ($finder as $file) {
+            $allfiles[] = $file->getRealpath();
+        }
+
+        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
+
+        # Removing
+        $fs = new Filesystem();
+        $fs->remove($removeFiles);
+
+        return count($removeFiles) . ' database backups removed';
     }
 
     /**
@@ -226,6 +296,7 @@ class Guardian
 
         // Default values
         $default = array(
+            'keep_backups' => 10,
             'include_tables' => array(),
             'exclude_tables' => array(),
             'compress' => 'None',
@@ -240,12 +311,12 @@ class Guardian
             'backup_file_prefix' => false
         );
 
-        foreach (array_keys($default) as $key) {
-            if (array_key_exists($key, $config) && (!empty($config[$key]) || $config[$key] === false )) {
-                $return[str_replace('_', '-', $key)] = $config[$key];
-            } else {
-                $return[str_replace('_', '-', $key)] = $default[$key];
-            }
+        // Return array
+        $return = array_merge($default, $config);
+
+        // Hack to be compatible with MysqlDump Vendor
+        foreach ($return as $key => $value) {
+            $return[str_replace('_', '-', $key)] = $value;
         }
 
         return $return;
@@ -264,11 +335,9 @@ class Guardian
             $config = $this->config[$project]['archive'];
         }
 
-        // Return array
-        $return = array();
-
         // Default values
         $default = array(
+            'keep_backups' => 10,
             'minsize' => false,
             'maxsize' => false,
             'exclude_folders' => false,
@@ -277,11 +346,8 @@ class Guardian
             'backup_file_prefix' => false
         );
 
-        foreach (array_keys($default) as $key) {
-            if (array_key_exists($key, $config) && (!empty($config[$key]) || $config[$key] === false )) {
-                $return[$key] = $config[$key];
-            }
-        }
+        // Return array
+        $return = array_merge($default, $config);
 
         // Default values
         if (empty($return['folders'])) {

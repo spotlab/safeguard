@@ -76,6 +76,32 @@ class Backup extends Command
                 else $style = 'comment';
                 $output->write(sprintf(' : <' . $style . '>%s</' . $style . '>', $e->getMessage()));
             }
+            $output->write("\n");
+
+            $output->write('>> Removing old database backups');
+            try {
+                $cleanBackups = $guardian->cleanDatabaseBackups($project);
+                if (!empty($cleanBackups)) {
+                    $output->write(' : <info>' . $cleanBackups . '</info>');
+                }
+            } catch (\Exception $e) {
+                if($e->getCode() == 0) $style = 'error';
+                else $style = 'comment';
+                $output->write(sprintf(' : <' . $style . '>%s</' . $style . '>', $e->getMessage()));
+            }
+            $output->write("\n");
+
+            $output->write('>> Removing old archives backups');
+            try {
+                $cleanBackups = $guardian->cleanArchiveBackups($project);
+                if (!empty($cleanBackups)) {
+                    $output->write(' : <info>' . $cleanBackups . '</info>');
+                }
+            } catch (\Exception $e) {
+                if($e->getCode() == 0) $style = 'error';
+                else $style = 'comment';
+                $output->write(sprintf(' : <' . $style . '>%s</' . $style . '>', $e->getMessage()));
+            }
             $output->write("\n\n");
         }
 

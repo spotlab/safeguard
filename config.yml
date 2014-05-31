@@ -1,5 +1,6 @@
 projetA:
     database:
+        keep_backups: 10
         driver: mysql
         host: 127.0.0.1
         name: projetA
@@ -23,6 +24,7 @@ projetA:
         backup_path: /home/admin/backup/projetA
         backup_file_prefix: projetA_
     archive:
+        keep_backups: 10
         folders:
             - /home/admin/www/projetA/current/web/assets
             - /home/admin/www/projetA/current/web/uploads
@@ -31,6 +33,7 @@ projetA:
 
 projetB:
     database:
+        keep_backups: 10
         name: projetB
         user: projetB
         password: zXly3tKZaut2eV9hOVPK
@@ -38,6 +41,7 @@ projetB:
 
 projetC:
     archive:
+        keep_backups: 10
         folders:
             - /home/admin/www/projetC/current/web/assets
         backup_path: /home/admin/backup/projetC
