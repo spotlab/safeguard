@@ -117,7 +117,7 @@ class Guardian
                 }
             }
 
-            # Create list to archive
+            // Create list to archive
             foreach ($finder as $file) {
                 $return[str_replace($commonPath . '/', '', $file->getRealpath())] = $file->getRealpath();
             }
@@ -216,10 +216,6 @@ class Guardian
             throw new \Exception('Database "name" must be defined', 0);
         }
 
-        // // Hack to be compatible with MysqlDump Vendor
-        // foreach ($return as $key => $value) {
-        //     $return[str_replace('_', '-', $key)] = $value;
-        // }
         return $return;
     }
 
@@ -384,13 +380,6 @@ class Guardian
             throw new \Exception('No "' . ucfirst($type) . ' config" for this project', 1);
         }
 
-        // Get settings
-        if ($type == 'archive') {
-            $settings = $this->getArchiveSettings($project);
-        } else {
-            $settings = $this->getDatabaseSettings($project);
-        }
-
         // Data required to backup Database
         $path = $this->getBackupPath($project, $type);
 
@@ -398,14 +387,27 @@ class Guardian
         $finder = new Finder();
         $finder = $finder->files()->followLinks()->sortByName()->in($path);
 
-        # Create list to archive
+        // Get settings
+        if ($type == 'archive') {
+            $settings = $this->getArchiveSettings($project);
+            $finder = $finder->name('*.tar.gz');
+        } else {
+            $settings = $this->getDatabaseSettings($project);
+            $finder = $finder->notName('*.tar.gz');
+        }
+
+        // Create list to archive
         foreach ($finder as $file) {
             $allfiles[] = $file->getRealpath();
         }
 
-        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
+        // Removing a number of backups
+        $keep_backups = $settings['keep_backups'];
+        if ($keep_backups != 0) {
+            $removeFiles = array_slice($allfiles, 0, $keep_backups * -1);
+        }
 
-        # Removing
+        // Removing
         $fs = new Filesystem();
         $fs->remove($removeFiles);
 
