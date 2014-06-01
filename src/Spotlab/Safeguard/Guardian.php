@@ -384,8 +384,12 @@ class Guardian
             throw new \Exception('No "' . ucfirst($type) . ' config" for this project', 1);
         }
 
-        // Get database settings
-        $settings = $this->getArchiveSettings($project);
+        // Get settings
+        if ($type == 'archive') {
+            $settings = $this->getArchiveSettings($project);
+        } else {
+            $settings = $this->getDatabaseSettings($project);
+        }
 
         // Data required to backup Database
         $path = $this->getBackupPath($project, $type);
