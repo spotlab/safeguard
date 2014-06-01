@@ -29,6 +29,7 @@ A simple application that parses through a config.yml file, to backup database (
 
     projetA:
         database:
+            keep_backups: 10
             driver: mysql
             host: 127.0.0.1
             name: projetA
@@ -52,6 +53,7 @@ A simple application that parses through a config.yml file, to backup database (
             backup_path: /home/admin/backup/projetA
             backup_file_prefix: projetA_
         archive:
+            keep_backups: 10
             # minsize: >= 10k
             # maxsize: <= 2G
             # exclude_folders:
@@ -69,6 +71,7 @@ A simple application that parses through a config.yml file, to backup database (
 
     projetB:
         database:
+            keep_backups: 10
             name: projetB
             user: projetB
             password: zXly3tKZaut2eV9hOVPK
@@ -77,6 +80,7 @@ A simple application that parses through a config.yml file, to backup database (
 
     projetC:
         archive:
+            keep_backups: 10
             folders:
                 - /home/admin/www/projetC/current/web/assets
             backup_path: /home/admin/backup/projetC

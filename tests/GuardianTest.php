@@ -17,40 +17,9 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($projects, array('projetA', 'projetB', 'projetC', 'projetD'));
     }
 
-    public function testgetDatabaseAccess()
+    public function testgetDatabaseDumpSettings()
     {
-        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseAccess', 'projetA');
-        $this->assertEquals($return, array(
-            'driver' => 'mysql',
-            'host' => '127.0.0.1',
-            'password' => 't2eV9hOVPKzXly3tKZau',
-            'name' => 'projetA',
-            'user' => 'projetA',
-            'backup_file_prefix' => 'projetA_',
-            )
-        );
-
-        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseAccess', 'projetB');
-        $this->assertEquals($return, array(
-            'driver' => 'mysql',
-            'host' => '127.0.0.1',
-            'password' => 'zXly3tKZaut2eV9hOVPK',
-            'name' => 'projetB',
-            'user' => 'projetB',
-            'backup_file_prefix' => false,
-            )
-        );
-
-        try {
-            $this->callPrivateMethod($this->guardian, 'getDatabaseAccess', 'projetC');
-        } catch (Exception $e) {
-            $this->assertEquals($e->getMessage(), 'Config for "Database Backup" is not defined');
-        }
-    }
-
-    public function testgetDatabaseSettings()
-    {
-        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseSettings', 'projetA');
+        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseDumpSettings', 'projetA');
         $this->assertEquals($return, array(
             'include-tables' => array(),
             'exclude-tables' => array(),
@@ -62,12 +31,11 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'lock-tables' => false,
             'add-locks' => false,
             'extended-insert' => false,
-            'disable-foreign-keys-check' => false,
-            'backup-file-prefix' => 'projetA_',
+            'disable-foreign-keys-check' => false
             )
         );
 
-        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseSettings', 'projetB');
+        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseDumpSettings', 'projetB');
         $this->assertEquals($return, array(
             'include-tables' => array(),
             'exclude-tables' => array(),
@@ -79,8 +47,64 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'lock-tables' => false,
             'add-locks' => false,
             'extended-insert' => false,
-            'disable-foreign-keys-check' => false,
-            'backup-file-prefix' => false
+            'disable-foreign-keys-check' => false
+            )
+        );
+
+        try {
+            $this->callPrivateMethod($this->guardian, 'getDatabaseDumpSettings', 'projetC');
+        } catch (Exception $e) {
+            $this->assertEquals($e->getMessage(), 'Config for "Database Backup" is not defined');
+        }
+    }
+
+    public function testgetDatabaseSettings()
+    {
+        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseSettings', 'projetA');
+        $this->assertEquals($return, array(
+            'keep_backups' => 5,
+            'include_tables' => array(),
+            'exclude_tables' => array(),
+            'compress' => 'GZIP',
+            'no_data' => false,
+            'add_drop_database' => false,
+            'add_drop_table' => false,
+            'single_transaction' => false,
+            'lock_tables' => false,
+            'add_locks' => false,
+            'extended_insert' => false,
+            'disable_foreign_keys_check' => false,
+            'backup_file_prefix' => 'projetA_',
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'name' => 'projetA',
+            'user' => 'projetA',
+            'password' => 't2eV9hOVPKzXly3tKZau',
+            'backup_path' => '/tmp/backup/projetA'
+            )
+        );
+
+        $return = $this->callPrivateMethod($this->guardian, 'getDatabaseSettings', 'projetB');
+        $this->assertEquals($return, array(
+            'keep_backups' => 10,
+            'include_tables' => array(),
+            'exclude_tables' => array(),
+            'compress' => 'None',
+            'no_data' => false,
+            'add_drop_database' => false,
+            'add_drop_table' => false,
+            'single_transaction' => false,
+            'lock_tables' => false,
+            'add_locks' => false,
+            'extended_insert' => false,
+            'disable_foreign_keys_check' => false,
+            'backup_file_prefix' => false,
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'name' => 'projetB',
+            'user' => 'projetB',
+            'password' => 'zXly3tKZaut2eV9hOVPK',
+            'backup_path' => '/tmp/backup/projetB'
             )
         );
 
@@ -100,7 +124,16 @@ class GuardianTest extends PHPUnit_Framework_TestCase
         }
 
         $return = $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetC');
-        $this->assertEquals($return, array('folders' => array('/home/admin/www/projetC/current/web/assets')));
+        $this->assertEquals($return, array(
+            'keep_backups' => 10,
+            'minsize' => false,
+            'maxsize' => false,
+            'exclude_folders' => false,
+            'exclude_files' => false,
+            'backup_file_prefix' => false,
+            'backup_path' => '/tmp/backup/projetC',
+            'folders' => array('/home/admin/www/projetC/current/web/assets')
+        ));
 
         try {
             $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'ProjectNotExist');
@@ -110,10 +143,13 @@ class GuardianTest extends PHPUnit_Framework_TestCase
 
         $return = $this->callPrivateMethod($this->guardian, 'getArchiveSettings', 'projetD');
         $this->assertEquals($return, array(
+            'keep_backups' => 10,
             'minsize' => '>= 0',
             'maxsize' => '<= 2G',
             'exclude_folders' => array('tests/debug/iterator/folderB/exclude'),
             'exclude_files' => array('exclude.gif', '.jpg'),
+            'backup_file_prefix' => false,
+            'backup_path' => '/tmp/backup/projetD',
             'folders' => array('tests/debug/iterator/folderA', 'tests/debug/iterator/folderB', 'tests/debug/iterator/folderC/subfolder')
         ));
     }

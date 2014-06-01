@@ -137,41 +137,6 @@ class Guardian
      * @param  string $project
      * @return array  $return
      */
-    public function cleanArchiveBackups($project)
-    {
-        // Exception if not defined
-        if (!isset($this->config[$project]['archive'])) {
-            throw new \Exception('No "Archive config" for this project', 1);
-        }
-
-        // Get database settings
-        $settings = $this->getArchiveSettings($project);
-
-        // Data required to backup Database
-        $path = $this->getBackupPath($project, 'archive');
-
-        // Search file with compression
-        $finder = new Finder();
-        $finder = $finder->files()->followLinks()->sortByName()->in($path);
-
-        # Create list to archive
-        foreach ($finder as $file) {
-            $allfiles[] = $file->getRealpath();
-        }
-
-        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
-
-        # Removing
-        $fs = new Filesystem();
-        $fs->remove($removeFiles);
-
-        return count($removeFiles) . ' archive backups removed';
-    }
-
-    /**
-     * @param  string $project
-     * @return array  $return
-     */
     public function backupDatabase($project)
     {
         // Exception if not defined
@@ -184,6 +149,7 @@ class Guardian
 
         // Get database settings
         $settings = $this->getDatabaseSettings($project);
+        $dumpSettings = $this->getDatabaseDumpSettings($project);
 
         // Get backup file prefix
         $backupDbPrefix = '';
@@ -194,88 +160,11 @@ class Guardian
         // Set filename
         $filename = $backupDbPrefix . date('Ymd_His') . '.sql';
 
-        // Get database access
-        $access = $this->getDatabaseAccess($project);
-
         // Dump action
-        $dump = new Mysqldump($access['name'], $access['user'], $access['password'], $access['host'], $access['driver'], $settings);
+        $dump = new Mysqldump($settings['name'], $settings['user'], $settings['password'], $settings['host'], $settings['driver'], $dumpSettings);
         $dump->start($path . '/' . $filename);
 
         return $this->getBackupInfo($path, $filename);
-    }
-
-    /**
-     * @param  string $project
-     * @return array  $return
-     */
-    public function cleanDatabaseBackups($project)
-    {
-        // Exception if not defined
-        if (!isset($this->config[$project]['database'])) {
-            throw new \Exception('No "Database config" for this project', 1);
-        }
-
-        // Get database settings
-        $settings = $this->getArchiveSettings($project);
-
-        // Data required to backup Database
-        $path = $this->getBackupPath($project, 'database');
-
-        // Search file with compression
-        $finder = new Finder();
-        $finder = $finder->files()->followLinks()->sortByName()->in($path);
-
-        # Create list to archive
-        foreach ($finder as $file) {
-            $allfiles[] = $file->getRealpath();
-        }
-
-        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
-
-        # Removing
-        $fs = new Filesystem();
-        $fs->remove($removeFiles);
-
-        return count($removeFiles) . ' database backups removed';
-    }
-
-    /**
-     * @param  string $project
-     * @return array  $return
-     */
-    private function getDatabaseAccess($project)
-    {
-        // Exception if not defined
-        if (empty($this->config[$project]['database'])) {
-            throw new \Exception('Config for "Database Backup" is not defined', 1);
-        } else {
-            $config = $this->config[$project]['database'];
-        }
-
-        // Return array
-        $return = array();
-
-        // Default values
-        $default = array(
-            'driver' => 'mysql',
-            'host' => '127.0.0.1',
-            'password' => '',
-            'name' => '',
-            'user' => '',
-            'backup_file_prefix' => '',
-        );
-
-        foreach (array_keys($default) as $key) {
-            if (array_key_exists($key, $config) && (!empty($config[$key]) || $config[$key] === false )) {
-                $return[$key] = $config[$key];
-            } elseif ($key == 'user' || $key == 'name') {
-                throw new \Exception('Database "' . $key . '" must be defined', 0);
-            } else {
-                $return[$key] = $default[$key];
-            }
-        }
-
-        return $return;
     }
 
     /**
@@ -296,6 +185,11 @@ class Guardian
 
         // Default values
         $default = array(
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'password' => '',
+            'name' => '',
+            'user' => '',
             'keep_backups' => 10,
             'include_tables' => array(),
             'exclude_tables' => array(),
@@ -314,10 +208,43 @@ class Guardian
         // Return array
         $return = array_merge($default, $config);
 
-        // Hack to be compatible with MysqlDump Vendor
-        foreach ($return as $key => $value) {
-            $return[str_replace('_', '-', $key)] = $value;
+        if (empty($return['user'])) {
+            throw new \Exception('Database "user" must be defined', 0);
         }
+
+        if (empty($return['name'])) {
+            throw new \Exception('Database "name" must be defined', 0);
+        }
+
+        // // Hack to be compatible with MysqlDump Vendor
+        // foreach ($return as $key => $value) {
+        //     $return[str_replace('_', '-', $key)] = $value;
+        // }
+        return $return;
+    }
+
+        /**
+     * @param  string $project
+     * @return array  $return
+     */
+    private function getDatabaseDumpSettings($project)
+    {
+        $settings = $this->getDatabaseSettings($project);
+
+        // Return array
+        $return = array(
+            'include-tables' => $settings['include_tables'],
+            'exclude-tables' => $settings['exclude_tables'],
+            'compress' => $settings['compress'],
+            'no-data' => $settings['no_data'],
+            'add-drop-database' => $settings['add_drop_database'],
+            'add-drop-table' => $settings['add_drop_table'],
+            'single-transaction' => $settings['single_transaction'],
+            'lock-tables' => $settings['lock_tables'],
+            'add-locks' => $settings['add_locks'],
+            'extended-insert' => $settings['extended_insert'],
+            'disable-foreign-keys-check' => $settings['disable_foreign_keys_check']
+        );
 
         return $return;
     }
@@ -444,5 +371,40 @@ class Guardian
         reset($return);
 
         return current($return);
+    }
+
+    /**
+     * @param  string $project
+     * @return array  $return
+     */
+    public function cleanBackups($project, $type)
+    {
+        // Exception if not defined
+        if (!isset($this->config[$project][$type])) {
+            throw new \Exception('No "' . ucfirst($type) . ' config" for this project', 1);
+        }
+
+        // Get database settings
+        $settings = $this->getArchiveSettings($project);
+
+        // Data required to backup Database
+        $path = $this->getBackupPath($project, $type);
+
+        // Search file with compression
+        $finder = new Finder();
+        $finder = $finder->files()->followLinks()->sortByName()->in($path);
+
+        # Create list to archive
+        foreach ($finder as $file) {
+            $allfiles[] = $file->getRealpath();
+        }
+
+        $removeFiles = array_slice($allfiles, 0, $settings['keep_backups'] * -1);
+
+        # Removing
+        $fs = new Filesystem();
+        $fs->remove($removeFiles);
+
+        return count($removeFiles) . ' ' . $type .' backups removed';
     }
 }

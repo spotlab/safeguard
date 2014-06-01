@@ -1,5 +1,6 @@
 projetA:
     database:
+        keep_backups: 5
         driver: mysql
         host: 127.0.0.1
         name: projetA
@@ -9,6 +10,7 @@ projetA:
         backup_path: /tmp/backup/projetA
         backup_file_prefix: projetA_
     archive:
+        keep_backups: 5
         folders:
             - /home/admin/www/projetA/current/web/assets
             - /home/admin/www/projetA/current/web/uploads

@@ -80,7 +80,7 @@ class Backup extends Command
 
             $output->write('>> Removing old database backups');
             try {
-                $cleanBackups = $guardian->cleanDatabaseBackups($project);
+                $cleanBackups = $guardian->cleanBackups($project, 'database');
                 if (!empty($cleanBackups)) {
                     $output->write(' : <info>' . $cleanBackups . '</info>');
                 }
@@ -93,7 +93,7 @@ class Backup extends Command
 
             $output->write('>> Removing old archives backups');
             try {
-                $cleanBackups = $guardian->cleanArchiveBackups($project);
+                $cleanBackups = $guardian->cleanBackups($project, 'archive');
                 if (!empty($cleanBackups)) {
                     $output->write(' : <info>' . $cleanBackups . '</info>');
                 }
