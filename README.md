@@ -17,7 +17,7 @@ A simple application that parses through a config.yml file, to backup database (
 ```
 {
     "require": {
-        "spotlab/safeguard": "1.*"
+        "spotlab/safeguard": "2.*"
     },
     "config": {
         "bin-dir": "bin"
