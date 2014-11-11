@@ -2,7 +2,7 @@
 
 namespace Spotlab\Safeguard;
 
-use Clouddueling\Mysqldump\Mysqldump;
+use Ifsnop\Mysqldump\Mysqldump;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
@@ -34,6 +34,22 @@ class Guardian
         }
 
         return $return;
+    }
+
+    /**
+     * @return array $return
+     */
+    public function getProjectByName($project)
+    {
+        // Return array
+        $projects = $this->getProjects();
+
+        // Exception if not defined
+        if (!in_array($project, $projects)) {
+            throw new \Exception($project . ' not find on config file', 0);
+        }
+
+        return $project;
     }
 
     /**
@@ -171,6 +187,52 @@ class Guardian
      * @param  string $project
      * @return array  $return
      */
+    public function restoreDatabase($project)
+    {
+        // Exception if not defined
+        if (!isset($this->config[$project]['database'])) {
+            throw new \Exception('No "Database config" for this project', 1);
+        }
+
+        // Data required to backup Database
+        $path = $this->getBackupPath($project, 'database');
+
+        // Get database settings
+        $settings = $this->getDatabaseSettings($project);
+        $dumpSettings = $this->getDatabaseDumpSettings($project);
+
+        // Get backup file prefix
+        $backupDbPrefix = '';
+        if (!empty($settings['backup_file_prefix'])) {
+            $backupDbPrefix = $settings['backup_file_prefix'];
+        }
+
+        // Get last BackupFile
+        $dumpFile = '';
+        foreach (glob($path . "/*sql*") as $filename) {
+            $dumpFile = $filename;
+        }
+
+        // Exception if not defined
+        if (empty($dumpFile)) {
+            throw new \Exception('No "Database backup" find for this project', 1);
+        }
+
+        // Is a gzip backup
+        if (strpos($dumpFile, 'sql.gz') !== false) {
+            $command = "gunzip < {$dumpFile} | mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']}";
+        } else {
+            $command = "mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']}";
+        }
+
+        // Restore action
+        return system($command);
+    }
+
+    /**
+     * @param  string $project
+     * @return array  $return
+     */
     private function getDatabaseSettings($project)
     {
         // Exception if not defined
@@ -199,9 +261,14 @@ class Guardian
             'add_drop_table' => false,
             'single_transaction' => false,
             'lock_tables' => false,
-            'add_locks' => false,
-            'extended_insert' => false,
-            'disable_foreign_keys_check' => false,
+            'add_locks' => true,
+            'extended_insert' => true,
+            'disable_keys' => true,
+            'where' => '',
+            'no_create_info' => false,
+            'skip_triggers' => false,
+            'add_drop_trigger' => true,
+            'hex_blob' => true,
             'backup_file_prefix' => false
         );
 
@@ -239,7 +306,12 @@ class Guardian
             'lock-tables' => $settings['lock_tables'],
             'add-locks' => $settings['add_locks'],
             'extended-insert' => $settings['extended_insert'],
-            'disable-foreign-keys-check' => $settings['disable_foreign_keys_check']
+            'disable-keys' => $settings['disable_keys'],
+            'where' => $settings['where'],
+            'no-create-info' => $settings['no_create_info'],
+            'skip-triggers' => $settings['skip_triggers'],
+            'add-drop-trigger' => $settings['add_drop_trigger'],
+            'hex-blob' => $settings['hex_blob']
         );
 
         return $return;

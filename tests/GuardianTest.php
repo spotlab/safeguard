@@ -29,9 +29,14 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add-drop-table' => false,
             'single-transaction' => false,
             'lock-tables' => false,
-            'add-locks' => false,
-            'extended-insert' => false,
-            'disable-foreign-keys-check' => false
+            'add-locks' => true,
+            'extended-insert' => true,
+            'disable-keys' => true,
+            'where' => '',
+            'no-create-info' => false,
+            'skip-triggers' => false,
+            'add-drop-trigger' => true,
+            'hex-blob' => true
             )
         );
 
@@ -45,9 +50,14 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add-drop-table' => false,
             'single-transaction' => false,
             'lock-tables' => false,
-            'add-locks' => false,
-            'extended-insert' => false,
-            'disable-foreign-keys-check' => false
+            'add-locks' => true,
+            'extended-insert' => true,
+            'disable-keys' => true,
+            'where' => '',
+            'no-create-info' => false,
+            'skip-triggers' => false,
+            'add-drop-trigger' => true,
+            'hex-blob' => true
             )
         );
 
@@ -71,9 +81,14 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add_drop_table' => false,
             'single_transaction' => false,
             'lock_tables' => false,
-            'add_locks' => false,
-            'extended_insert' => false,
-            'disable_foreign_keys_check' => false,
+            'add_locks' => true,
+            'extended_insert' => true,
+            'disable_keys' => true,
+            'where' => '',
+            'no_create_info' => false,
+            'skip_triggers' => false,
+            'add_drop_trigger' => true,
+            'hex_blob' => true,
             'backup_file_prefix' => 'projetA_',
             'driver' => 'mysql',
             'host' => '127.0.0.1',
@@ -95,9 +110,14 @@ class GuardianTest extends PHPUnit_Framework_TestCase
             'add_drop_table' => false,
             'single_transaction' => false,
             'lock_tables' => false,
-            'add_locks' => false,
-            'extended_insert' => false,
-            'disable_foreign_keys_check' => false,
+            'add_locks' => true,
+            'extended_insert' => true,
+            'disable_keys' => true,
+            'where' => '',
+            'no_create_info' => false,
+            'skip_triggers' => false,
+            'add_drop_trigger' => true,
+            'hex_blob' => true,
             'backup_file_prefix' => false,
             'driver' => 'mysql',
             'host' => '127.0.0.1',

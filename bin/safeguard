@@ -3,6 +3,7 @@
 
 use Symfony\Component\Console\Application;
 use Spotlab\Safeguard\Command\Backup;
+use Spotlab\Safeguard\Command\Restore;
 
 if (PHP_SAPI !== 'cli') {
     echo 'Warning: Safeguard should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
@@ -62,6 +63,7 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
  */
 $app = new Application();
 $app->setName('Safeguard');
-$app->setVersion('v1.8');
+$app->setVersion('v2.0');
 $app->add(new Backup());
+$app->add(new Restore());
 $app->run();

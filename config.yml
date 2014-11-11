@@ -6,21 +6,27 @@ projetA:
         name: projetA
         user: projetA
         password: t2eV9hOVPKzXly3tKZau
+        compress: GZIP
         # include_tables:
         #     - table1
         #     - table2
         # exclude_tables:
         #     - table1
         #     - table2
-        compress: GZIP
         # no_data: false
         # add_drop_database: false
         # add_drop_table: false
         # single_transaction: false
         # lock_tables: false
-        # add_locks: false
-        # extended_insert: false
-        # disable_foreign_keys_check: false
+        # add_locks: true
+        # extended_insert: true
+        # disable_keys: true
+        # where: ''
+        # no_create_info: false
+        # skip_triggers: false
+        # add_drop_trigger: true
+        # hex_blob: true
+        backup_file_prefix: false
         backup_path: /home/admin/backup/projetA
         backup_file_prefix: projetA_
     archive:
@@ -37,6 +43,7 @@ projetB:
         name: projetB
         user: projetB
         password: zXly3tKZaut2eV9hOVPK
+        compress: None
         backup_path: /home/admin/backup/projetB
 
 projetC:
