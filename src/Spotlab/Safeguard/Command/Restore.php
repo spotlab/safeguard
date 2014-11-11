@@ -4,6 +4,7 @@ namespace Spotlab\Safeguard\Command;
 
 use Spotlab\Safeguard\Guardian;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,8 +23,11 @@ class Restore extends Command
         $this->setName('restore')
              ->setDescription('Restore SQL from config file');
 
-        $this->addArgument('config', InputArgument::REQUIRED, 'The path to the config file (.json)')
-             ->addArgument('project', InputArgument::REQUIRED, 'The name of the project to restore');
+        $this
+            ->addOption('project', 'p', InputOption::VALUE_REQUIRED, 'The name of the project to restore')
+            ->addOption('file', 'f', InputOption::VALUE_OPTIONAL, 'The absolute path to the backup file');
+
+        $this->addArgument('config', InputArgument::REQUIRED, 'The path to the config file (.json)');
     }
 
     /**
@@ -35,20 +39,25 @@ class Restore extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        // Get options
+        $project = $input->getOption('project');
+        if ($input->getOption('file')) {
+            $file = $input->getOption('file');
+        } else {
+            $file = '';
+        }
+
         // First step : Analysing config
         $config_path = $input->getArgument('config');
         $guardian = new Guardian($config_path);
         $output->writeln(sprintf('Analysing config file : <info>%s</info>', $config_path));
         $output->write("\n");
 
-        // Actions for every projects in config
-        $project = $guardian->getProjectByName($input->getArgument('project'));
-
         $output->writeln(sprintf('> Start SQL restore : <info>%s</info>', $project));
         $output->writeln('------------------------------');
 
         try {
-            $guardian->restoreDatabase($project);
+            $guardian->restoreDatabase($project, $file);
         } catch (\Exception $e) {
             if($e->getCode() == 0) $style = 'error';
             else $style = 'comment';

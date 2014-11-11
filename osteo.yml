@@ -1,0 +1,12 @@
+projetA:
+    database:
+        keep_backups: 10
+        driver: mysql
+        host: 127.0.0.1
+        name: osteo
+        user: osteo
+        password: kekGAKbTDe92
+        compress: GZIP
+        add_drop_table: true
+        backup_path: /home/admin/www/backup/projetA
+        backup_file_prefix: projetA_

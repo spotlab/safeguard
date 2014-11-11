@@ -35,21 +35,27 @@ A simple application that parses through a config.yml file, to backup database (
             name: projetA
             user: projetA
             password: t2eV9hOVPKzXly3tKZau
+            compress: GZIP
             # include_tables:
             #     - table1
             #     - table2
             # exclude_tables:
             #     - table1
             #     - table2
-            compress: GZIP
             # no_data: false
             # add_drop_database: false
             # add_drop_table: false
             # single_transaction: false
             # lock_tables: false
-            # add_locks: false
-            # extended_insert: false
-            # disable_foreign_keys_check: false
+            # add_locks: true
+            # extended_insert: true
+            # disable_keys: true
+            # where: ''
+            # no_create_info: false
+            # skip_triggers: false
+            # add_drop_trigger: true
+            # hex_blob: true
+            backup_file_prefix: false
             backup_path: /home/admin/backup/projetA
             backup_file_prefix: projetA_
         archive:
@@ -75,6 +81,7 @@ A simple application that parses through a config.yml file, to backup database (
             name: projetB
             user: projetB
             password: zXly3tKZaut2eV9hOVPK
+            compress: None
             backup_path: /home/admin/backup/projetB
             backup_file_prefix: projetB_
 
@@ -86,9 +93,21 @@ A simple application that parses through a config.yml file, to backup database (
             backup_path: /home/admin/backup/projetC
             backup_file_prefix: projetC_
 
-#### Start command
+#### Start backup command
 
-    bin/safeguard backup config.yml
+```
+bin/safeguard backup config.yml
+```
+
+#### Start restore SQL command
+
+```
+# Restore the last backup file
+bin/safeguard restore config.yml --project=projetA
+
+# Restore a specific backup file
+bin/safeguard restore config.yml --project=projetA --file=/home/admin/backup/projetA/projetA_20141111_214647.sql.gz
+```
 
 ## Contributing
 

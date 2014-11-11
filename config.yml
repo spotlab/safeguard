@@ -31,6 +31,15 @@ projetA:
         backup_file_prefix: projetA_
     archive:
         keep_backups: 10
+        # minsize: >= 10k
+        # maxsize: <= 2G
+        # exclude_folders:
+        #     - /home/admin/www/projetA/current/web/assets/CACHE
+        #     - /home/admin/www/projetA/current/web/assets/exclude
+        # exclude_files:
+        #     - myfilename.gif
+        #     - .jpg
+        #     - .exe
         folders:
             - /home/admin/www/projetA/current/web/assets
             - /home/admin/www/projetA/current/web/uploads

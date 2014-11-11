@@ -37,22 +37,6 @@ class Guardian
     }
 
     /**
-     * @return array $return
-     */
-    public function getProjectByName($project)
-    {
-        // Return array
-        $projects = $this->getProjects();
-
-        // Exception if not defined
-        if (!in_array($project, $projects)) {
-            throw new \Exception($project . ' not find on config file', 0);
-        }
-
-        return $project;
-    }
-
-    /**
      * @param  string $project
      * @return array  $return
      */
@@ -187,7 +171,7 @@ class Guardian
      * @param  string $project
      * @return array  $return
      */
-    public function restoreDatabase($project)
+    public function restoreDatabase($project, $file = '')
     {
         // Exception if not defined
         if (!isset($this->config[$project]['database'])) {
@@ -199,30 +183,24 @@ class Guardian
 
         // Get database settings
         $settings = $this->getDatabaseSettings($project);
-        $dumpSettings = $this->getDatabaseDumpSettings($project);
 
-        // Get backup file prefix
-        $backupDbPrefix = '';
-        if (!empty($settings['backup_file_prefix'])) {
-            $backupDbPrefix = $settings['backup_file_prefix'];
-        }
+        // Get last BackupFile if no file defined
+        if (empty($file)) {
+            foreach (glob($path . "/*sql*") as $filename) {
+                $file = $filename;
+            }
 
-        // Get last BackupFile
-        $dumpFile = '';
-        foreach (glob($path . "/*sql*") as $filename) {
-            $dumpFile = $filename;
-        }
-
-        // Exception if not defined
-        if (empty($dumpFile)) {
-            throw new \Exception('No "Database backup" find for this project', 1);
+            // Exception if not find
+            if (empty($file)) {
+                throw new \Exception('No "Database backup" find for this project', 1);
+            }
         }
 
         // Is a gzip backup
-        if (strpos($dumpFile, 'sql.gz') !== false) {
-            $command = "gunzip < {$dumpFile} | mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']}";
+        if (strpos($file, 'sql.gz') !== false) {
+            $command = "gunzip < {$file} | mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']}";
         } else {
-            $command = "mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']}";
+            $command = "mysql --binary-mode -u{$settings['user']} -p{$settings['password']} {$settings['name']} < {$file}";
         }
 
         // Restore action
