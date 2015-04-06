@@ -159,6 +159,9 @@ class Guardian
 
         // Set filename
         $filename = $backupDbPrefix . date('Ymd_His') . '.sql';
+        if ($dumpSettings['compress'] == 'GZIP') {
+            $filename .= '.gz';
+        }
 
         // Dump action
         $dump = new Mysqldump($settings['name'], $settings['user'], $settings['password'], $settings['host'], $settings['driver'], $dumpSettings);

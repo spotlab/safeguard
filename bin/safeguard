@@ -63,7 +63,7 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
  */
 $app = new Application();
 $app->setName('Safeguard');
-$app->setVersion('v2.1');
+$app->setVersion('v2.2');
 $app->add(new Backup());
 $app->add(new Restore());
 $app->run();

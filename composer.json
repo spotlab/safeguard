@@ -1,7 +1,7 @@
 {
     "name": "spotlab/safeguard",
     "type": "library",
-    "description": "",
+    "description": "A simple application that parses through a config.yml file, to backup database (mysql, sqlite, pgsql, dblib) and to archive files in tar.gz",
     "keywords": ["dump","backup","mysql","PDO","file"],
     "homepage": "http://github.com/spotlab/safeguard",
     "license": "MIT",
@@ -20,7 +20,7 @@
         "symfony/yaml": "2.4.*",
         "symfony/filesystem": "2.4.*",
         "symfony/finder": "2.4.*",
-        "ifsnop/mysqldump-php": "1.*"
+        "ifsnop/mysqldump-php": "1.5"
     },
     "autoload": {
         "psr-0": {
