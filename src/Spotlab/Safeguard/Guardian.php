@@ -450,6 +450,7 @@ class Guardian
         }
 
         // Create list to archive
+        $allfiles = array();
         foreach ($finder as $file) {
             $allfiles[] = $file->getRealpath();
         }
